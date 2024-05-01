@@ -63,6 +63,21 @@ if (!include_once($configFilePath)) {
     outputStderr(sprintf('Could not open config.php at "%s". Please follow the getting started guide and provide a valid config.php file. Exiting.', $configFilePath));
     exit(1);
 }
+//Get Parameter from URL
+if (isset($_GET['ipv4'])) {
+    $URLprovidedIPv4 = ($_GET['ipv4']);
+    if (!isIPv4Valid($URLprovidedIPv4)) {
+        outputStderr(sprintf('URL provided IPv4 address "%s" is invalid. Exiting.', $URLprovidedIPv4));
+        exit(1);
+    }
+}
+if (isset($_GET['ipv6'])) {
+    $URLprovidedIPv6 = ($_GET['ipv6']);
+    if (!isIPv4Valid($URLprovidedIPv6)) {
+        outputStderr(sprintf('URL provided IPv4 address "%s" is invalid. Exiting.', $URLprovidedIPv6));
+        exit(1);
+    }
+}
 
 
 //Checks if curl PHP extension is installed
@@ -296,7 +311,12 @@ function getCurrentPublicIPv4()
         outputStdout(sprintf('Using manually provided IPv4 address "%s"', $providedIPv4));
         return $providedIPv4;
     }
-
+    // If user provided an IPv4 address by URL
+    global $URLprovidedIPv4;
+    if (isset($URLprovidedIPv4)) {
+        outputStdout(sprintf('Using URL provided IPv4 address "%s"', $URLprovidedIPv4));
+        return $URLprovidedIPv4;
+    }
     outputStdout('Getting IPv4 address from ' . IPV4_ADDRESS_URL . '.');
 
     $url = IPV4_ADDRESS_URL;
@@ -343,7 +363,13 @@ function getCurrentPublicIPv6()
         outputStdout(sprintf('Using manually provided IPv6 address "%s"', $providedIPv6));
         return $providedIPv6;
     }
-
+    
+    // If user provided an IPv6 address by URL
+    global $URLprovidedIPv6;
+    if (isset($URLprovidedIPv6)) {
+        outputStdout(sprintf('Using URL provided IPv6 address "%s"', $URLprovidedIPv6));
+        return $URLprovidedIPv6;
+    }
     outputStdout('Getting IPv6 address from ' . IPV6_ADDRESS_URL . '.');
 
     $url = IPV6_ADDRESS_URL;
